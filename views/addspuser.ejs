@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Add Special User</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      input[type="text"],
+      input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        margin-bottom: 20px;
+      }
+
+      input[id="submit"] {
+        background-color: #4CAF50;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      input[id="remove"] {
+        background-color: brown;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      input[id="remove"]:hover {
+        background-color: darkred;
+      }
+
+      input[id="submit"]:hover {
+        background-color: #3e8e41;
+      }
+      table {
+    margin-top: 70px;
+    border-collapse: collapse;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    background-color: #4CAF50;
+    color: #fff;
+  }
+  tr:hover {
+    background-color: #f5f5f5;
+  }
+  .result {
+    margin-top: 20px;
+  }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Add Special User</h1>
+      <form action="/addspecialuser" method="POST">
+        <label for="username">ID:</label>
+        <input type="text" id="id" name="id" required>
+        <input type="submit" id= "submit" value="Submit">
+        <input type="submit" id="remove" value="Delete" formaction="/removespecialuser">
+      </form>
+      <div class="result">
+        <% if (specialUsers.length > 0) { %>
+          <table>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+            </tr>
+            <% specialUsers.forEach(function(user) { %>
+              <tr>
+                <td><%= user.id %></td>
+                <% if (user.username) { %>
+                  <td><%= user.username %></td>
+                <% } else { %>
+                  <td>-</td>
+                <% } %>
+              </tr>
+            <% }); %>
+          </table>
+        <% } %>
+      </div>
+    </div>
+  </body>
+</html>

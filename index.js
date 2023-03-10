@@ -82,6 +82,24 @@ connection.query(checkTableSql, ['questionhandler'], function (error, results, f
   }
 });
 
+const createTableSql3 = `CREATE TABLE special_user (
+  id INT(11) PRIMARY KEY
+)`;
+
+connection.query(checkTableSql, ['special_user'], function (error, results, fields) {
+  if (error) throw error;
+  if (results.length === 0) {
+    connection.query(createTableSql3, function (error, results, fields) {
+      if (error) throw error;
+      console.log('Table created (special_user)');
+    });
+  } else {
+    console.log('Table already exists (special_user)');
+  }
+});
+
+
+
 
 // connection.query("INSERT INTO users (email, password) VALUES ('user@example.com','password')", function (err, result) {
 //     if (err) throw err;
@@ -252,29 +270,67 @@ function generateUniqueId(connection) {
     });
 }
 
+// app.post('/submit', function (req, res) {
+//     generateUniqueId(connection).then((id) => {
+//         const question = req.body.question;
+//         const questionid = req.body.id;
+//         console.log(req.body);
+//         const sql = 'INSERT INTO question (id,question, questionid) VALUES (?,?,?)';
+//         connection.query(sql, [id, question, questionid], function (error, results, fields) {
+//             if (error) {
+//                 console.error(error);
+//                 res.status(500).send({ error: 'An error occurred while inserting the question.' });
+//             } else {
+//                 console.log("|-------------------------|")
+//                 console.log('A new record inserted!');
+//                 console.log('ID: ' + id);
+//                 console.log('QuestionID: ' + questionid)
+//                 console.log('A new Question appeared: \"' + question + "\"")
+//                 console.log("|-------------------------|")
+//                 console.log("")
+//                 console.log("")
+//                 res.status(200).send({ message: 'Question submitted successfully.' });
+//             }
+//         });
+//     });
+// });
+
 app.post('/submit', function (req, res) {
-    generateUniqueId(connection).then((id) => {
-        const question = req.body.question;
-        const questionid = req.body.id;
-        console.log(req.body);
-        const sql = 'INSERT INTO question (id,question, questionid) VALUES (?,?,?)';
-        connection.query(sql, [id, question, questionid], function (error, results, fields) {
-            if (error) {
-                console.error(error);
-                res.status(500).send({ error: 'An error occurred while inserting the question.' });
-            } else {
-                console.log("|-------------------------|")
-                console.log('A new record inserted!');
-                console.log('ID: ' + id);
-                console.log('QuestionID: ' + questionid)
-                console.log('A new Question appeared: \"' + question + "\"")
-                console.log("|-------------------------|")
-                console.log("")
-                console.log("")
-                res.status(200).send({ message: 'Question submitted successfully.' });
-            }
-        });
-    });
+  generateUniqueId(connection).then((id) => {
+      const question = req.body.question;
+      const questionid = req.body.id;
+      console.log(req.body);
+      const checkSql = 'SELECT COUNT(*) AS count FROM questionhandler WHERE questionid = ?';
+      connection.query(checkSql, [questionid], function (error, results, fields) {
+          if (error) {
+              console.error(error);
+              res.status(500).send({ error: 'An error occurred while checking the question ID.' });
+          } else {
+              const count = results[0].count;
+              if (count > 0) {
+                  const insertSql = 'INSERT INTO question (id,question, questionid) VALUES (?,?,?)';
+                  connection.query(insertSql, [id, question, questionid], function (error, results, fields) {
+                      if (error) {
+                          console.error(error);
+                          res.status(500).send({ error: 'An error occurred while inserting the question.' });
+                      } else {
+                          console.log("|-------------------------|")
+                          console.log('A new record inserted!');
+                          console.log('ID: ' + id);
+                          console.log('QuestionID: ' + questionid)
+                          console.log('A new Question appeared: \"' + question + "\"")
+                          console.log("|-------------------------|")
+                          console.log("")
+                          console.log("")
+                          res.status(200).send({ message: 'Question submitted successfully.' });
+                      }
+                  });
+              } else {
+                  res.status(400).send({ error: 'Invalid question ID.' });
+              }
+          }
+      });
+  });
 });
 
 const getQuestions = (id) => {
@@ -439,6 +495,24 @@ app.post('/questions/:id/delete', (req, res) => {
   }
 });
 
+
+app.post('/session/:id/delete', (req, res) => {
+  // Get the ID of the question from the request parameters
+  console.log('Question deleting attempt detected! ' + res.statusCode);
+  const qid = req.params.id;
+  const query = `DELETE FROM questionhandler WHERE questionid = ${qid}`;
+  try {
+    connection.query(query, function (error, results, fields) {
+        if (error) throw error;
+        res.status(200).send(`Successfully deleting the session! (Session ID: ${qid})`);
+        console.log(`Successfully deleting the session! (Session ID: ${qid})`)
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
+
 // app.get('/profile', (req, res) => {
 //   const token = req.cookies.token;
 //   const email = req.cookies.email;
@@ -450,6 +524,67 @@ app.post('/questions/:id/delete', (req, res) => {
 //   return res.json({ token: token, email: email });
 // });
 
+app.get('/addspecialuser', async (req, res) => {
+  try {
+    connection.query('SELECT special_user.id, users.username FROM special_user LEFT JOIN users ON special_user.id = users.id', function(error, results, fields) {
+      if (error) {
+        console.error(error);
+        res.status(500).send('An error occurred');
+        return;
+      }
+      const specialUsers = results.map(result => ({
+        id: result.id,
+        username: result.username,
+      }));
+      res.render('addspuser.ejs', { specialUsers });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+app.post('/addspecialuser', (req, res) => {
+  const id = req.body.id; // assuming the submitted form contains a field named "id"
+  if(isNaN(id)) {
+    res.send('Bukan Angka!')
+    return
+  }
+
+  connection.query(
+    'INSERT INTO special_user (id) VALUES (?)',
+    [id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send('Error inserting data into database');
+      } else {
+        console.log(`Special user ${id} added to database`);
+        res.redirect('/addspecialuser') // redirect to a page that lists all special users
+      }
+    }
+  );
+});
+
+app.post('/specialuserlist', async (req, res) => {
+  connection.query('SELECT id FROM special_user', function(error, results, fields) {
+    if (error) throw error;
+    const ids = results.map(result => result.id);
+    console.log(ids);
+    res.json(ids);
+  });
+});
+
+app.post('/removespecialuser', async (req, res) => {
+  const { id } = req.body;
+
+  connection.query('DELETE FROM special_user WHERE id = ?', [id], (error, results, fields) => {
+    if (error) throw error;
+
+    console.log('ID removed from special_user table')
+    res.redirect('/addspecialuser') 
+  });
+});
 
 app.post('/status', (req, res) => {
     res.status(200).send('Server is running.');
