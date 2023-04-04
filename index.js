@@ -3,12 +3,13 @@ const app = express();
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const mysql = require('mysql');
-
+require("dotenv").config();
 /**
  * 
  * Database thing
  * 
 */
+
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -112,6 +113,20 @@ connection.query(checkTableSql, ['special_user'], function (error, results, fiel
  * 
  */
 
+const acceptedIps = process.env.ACCEPTEDIP ? process.env.ACCEPTEDIP.split(',') : null;
+
+const checkIpMiddleware = (req, res, next) => {
+  const acceptedIps = process.env.ACCEPTEDIP;
+  if (!acceptedIps) {
+    return next(); // skip this middleware if ACCEPTEDIP is not defined
+  }
+  const ip = req.ip.replace(/[^0-9.]/g, '');
+  if (acceptedIps.split(',').includes(ip)) {
+    next(); // continue to the next middleware or route
+  } else {
+    res.status(403).send('Access Denied'); // return a 403 Forbidden response
+  }
+};
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true })); 
 
@@ -149,7 +164,7 @@ app.get('/', (req, res) => {
     res.render('home.ejs')
 })
 
-app.post('/register', async (req, res) => {
+app.post('/register', checkIpMiddleware, async (req, res) => {
     const randomNumber = Math.floor(Math.random() * Math.pow(10, 12));
     console.log('Register attempt detected! ' + res.statusCode, req.body);
     try {
@@ -212,7 +227,7 @@ app.post('/register', async (req, res) => {
 //     }
 // });
 
-app.post('/login', async (req, res) => {
+app.post('/login', checkIpMiddleware, async (req, res) => {
   console.log('Login attempt detected! ' + res.statusCode, req.body);
   try {
       connection.query('SELECT * FROM users WHERE email = ?', [req.body.email], async (error, results, fields) => {
@@ -295,7 +310,7 @@ function generateUniqueId(connection) {
 //     });
 // });
 
-app.post('/submit', function (req, res) {
+app.post('/submit', checkIpMiddleware, function (req, res) {
   generateUniqueId(connection).then((id) => {
       const question = req.body.question;
       const questionid = req.body.id;
@@ -372,7 +387,7 @@ const getQuestionsPerProfile = (id) => {
 //   });
 // };
 
-app.post('/getquestiontitle/:id', async (req, res) => {
+app.post('/getquestiontitle/:id', checkIpMiddleware, async (req, res) => {
   const questionid = req.params.id;
 
   const query = `SELECT * FROM questionhandler WHERE questionid = ${questionid}`;
@@ -395,7 +410,7 @@ app.post('/getquestiontitle/:id', async (req, res) => {
 
 
 
-app.post('/questionsprofilelist/:id', async (req, res) => {
+app.post('/questionsprofilelist/:id', checkIpMiddleware, async (req, res) => {
   const id = req.params.id;
   console.log('Questions getting attempt detected! ' + res.statusCode);
   try {
@@ -409,7 +424,7 @@ app.post('/questionsprofilelist/:id', async (req, res) => {
   }
 })
 
-app.post('/submitquestionprofilelist', async (req, res) => {
+app.post('/submitquestionprofilelist', checkIpMiddleware, async (req, res) => {
   const userid = req.body.userid;
   const question = req.body.question;
 
@@ -427,7 +442,7 @@ app.post('/submitquestionprofilelist', async (req, res) => {
   }
 });
 
-app.post('/getusernamebyquestionid/:id', async (req, res) => {
+app.post('/getusernamebyquestionid/:id', checkIpMiddleware, async (req, res) => {
   const questionId = req.params.id;
 
   // Query the question table to get the question
@@ -447,7 +462,7 @@ app.post('/getusernamebyquestionid/:id', async (req, res) => {
   });
 });
 
-app.post('/questionslist', async (req, res) => {
+app.post('/questionslist', checkIpMiddleware, async (req, res) => {
   console.log('Questions getting attempt detected! ' + res.statusCode);
   const id = req.body.id;
   try {
@@ -461,7 +476,7 @@ app.post('/questionslist', async (req, res) => {
   }
 })
 
-app.post('/questions/:id', (req, res) => {
+app.post('/questions/:id', checkIpMiddleware, (req, res) => {
   // Get the ID of the question from the request parameters
   console.log('Question getting attempt detected! ' + res.statusCode);
   const id = req.params.id;
@@ -478,7 +493,7 @@ app.post('/questions/:id', (req, res) => {
   }
 });
 
-app.post('/questions/:id/delete', (req, res) => {
+app.post('/questions/:id/delete', checkIpMiddleware, (req, res) => {
   // Get the ID of the question from the request parameters
   console.log('Question deleting attempt detected! ' + res.statusCode);
   const id = req.params.id;
@@ -496,7 +511,7 @@ app.post('/questions/:id/delete', (req, res) => {
 });
 
 
-app.post('/session/:id/delete', (req, res) => {
+app.post('/session/:id/delete', checkIpMiddleware, (req, res) => {
   // Get the ID of the question from the request parameters
   console.log('Question deleting attempt detected! ' + res.statusCode);
   const qid = req.params.id;
@@ -544,7 +559,7 @@ app.get('/addspecialuser', async (req, res) => {
   }
 });
 
-app.post('/addspecialuser', (req, res) => {
+app.post('/addspecialuser', checkIpMiddleware, (req, res) => {
   const id = req.body.id; // assuming the submitted form contains a field named "id"
   if(isNaN(id)) {
     res.send('Bukan Angka!')
@@ -566,7 +581,7 @@ app.post('/addspecialuser', (req, res) => {
   );
 });
 
-app.post('/specialuserlist', async (req, res) => {
+app.post('/specialuserlist', checkIpMiddleware, async (req, res) => {
   connection.query('SELECT id FROM special_user', function(error, results, fields) {
     if (error) throw error;
     const ids = results.map(result => result.id);
@@ -575,7 +590,7 @@ app.post('/specialuserlist', async (req, res) => {
   });
 });
 
-app.post('/removespecialuser', async (req, res) => {
+app.post('/removespecialuser', checkIpMiddleware, async (req, res) => {
   const { id } = req.body;
 
   connection.query('DELETE FROM special_user WHERE id = ?', [id], (error, results, fields) => {
@@ -586,9 +601,9 @@ app.post('/removespecialuser', async (req, res) => {
   });
 });
 
-app.post('/status', (req, res) => {
+app.post('/status', checkIpMiddleware, (req, res) => {
     res.status(200).send('Server is running.');
-    console.log('Someone is pinged to this API!')
+    console.log(`Someone is pinged to this API! (${req.ip})`)
 });
 
 // TODO Bikin Profile, Kelarin UI, Cookies, and more.
