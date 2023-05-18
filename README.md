@@ -1,51 +1,51 @@
 # **AskMeAPI Documentation**
 
-## /status --> 
+## /status 
 > Checking the status of the API.
 
-## /register --> 
+## /register
 > Making a new user through the database.
 
-## /login --> 
+## /login
 > Checking and sending the user data, and give an access.
 
-## /submit --> 
+## /submit
 > Submiting the interaction to user question.
 
-## /getquestiontitle/:id --> 
+## /getquestiontitle/:id
 > Getting the question title of a user.
 
-## /questionsprofilelist/:id --> 
+## /questionsprofilelist/:id
 > Getting question list of a user.
 
-## /submitquestionprofilelist --> 
+## /submitquestionprofilelist 
 > Making a new question for a user.
 
-## /getusernamebyquestionid/:id --> 
+## /getusernamebyquestionid/:id 
 > Getting a username by a questionid.
 
-## /questionslist --> 
+## /questionslist
 > Getting the user answer list.
 
-## /questions/:id --> 
+## /questions/:id
 > Getting the user answer by an id.
 
-## /questions/:id/delete --> 
+## /questions/:id/delete
 > Deleting an answer from an id.
 
-## /session/:id/delete --> 
+## /session/:id/delete
 > Deleting a question from an id.
 
-## /addspecialuser --> 
+## /addspecialuser
 > Adding special user.
 
-## /specialuserlist --> 
+## /specialuserlist
 > Getting list of special user.
 
-## /removespecialuser --> 
+## /removespecialuser
 > Removing special user by an id.
 
-## /emergencyoff --> 
+## /emergencyoff
 > Shutdown the server.
 
 
