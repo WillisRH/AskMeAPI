@@ -1,6 +1,7 @@
 ### AskMeAPI Documentation
 
 /status --> Checking the status of the API.
+
 /register --> Making a new user through the database.
 /login --> Checking and sending the user data, and give an access.
 /submit --> Submiting the interaction to user question.
