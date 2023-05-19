@@ -46,7 +46,7 @@
 > Removing special user by an id.
 
 ## /emergencyoff
-> Shutdown the server.
+> Shutdown the server immediately.
 
 
 ### Gw juga pusing bikin repo nya, kalo salah yaaa, mohon maklumi.
