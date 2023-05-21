@@ -335,6 +335,55 @@ app.post('/login', checkIpMiddleware, async (req, res) => {
   }
 });
 
+// app.post('/senduserdata', checkIpMiddleware, async (req, res) => {
+//   console.log('Userdata fetch detected. ' + res.statusCode, req.body);
+//   try {
+//       connection.query('SELECT * FROM users WHERE email = ?', [req.body.email], async (error, results, fields) => {
+//           if (error) {
+//               console.log(error);
+//               return res.status(500).send(e.message);
+//           }
+//       if (results.length === 0) {
+//           return res.status(202).send('user not found (202)');
+//       }
+//       const token = jwt.sign({ id: results[0].id }, 'secretkey');
+//       const email = req.body.email;
+//       const username = results[0].username;
+//       const id = results[0].id;
+//       res.status(200).json({ token, email, username, id });
+//       console.log("{Userdata} The Token is: " + token)
+//       });
+//   } catch (e) {
+//       res.status(500).send(e.message);
+//   }
+// });
+
+app.post('/senduserdata/:id', checkIpMiddleware, async (req, res) => {
+  const idparam = req.params.id;
+  console.log('Userdata fetch detected. ' + res.statusCode, idparam);
+  try {
+      connection.query('SELECT * FROM users WHERE id = ?', [idparam], async (error, results, fields) => {
+          if (error) {
+              console.log(error);
+              return res.status(500).send(e.message);
+          }
+      if (results.length === 0) {
+          return res.status(202).send('user not found (202)');
+      }
+      const token = jwt.sign({ id: idparam }, 'secretkey');
+      const email = results[0].email;
+      const username = results[0].username;
+      const id = idparam;
+      res.status(200).json({ token, email, username, id });
+      console.log("{Userdata} The Token is: " + token)
+      });
+  } catch (e) {
+      res.status(500).send(e.message);
+  }
+});
+
+
+
 // Submit logical.
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
