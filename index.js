@@ -3,6 +3,7 @@ const app = express();
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const mysql = require('mysql');
+const cors = require('cors');
 require("dotenv").config();
 /**
  * 
@@ -130,7 +131,7 @@ const checkIpMiddleware = (req, res, next) => {
 };
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true })); 
-
+app.use(cors());
 app.use(bodyParser.json());
 
 
@@ -252,13 +253,13 @@ app.post('/register', checkIpMiddleware, async (req, res) => {
         connection.query('SELECT * FROM users WHERE email = ? OR username = ?', [req.body.email, req.body.username], async (error, results, fields) => {
             if (results.length > 0) {
                 console.log('Email or username is already exist!')
-                return res.status(400).send('Email or username already exists');
+                return res.status(202).send('Email or username already exists');
             }
             const salt = await bcrypt.genSalt();
             const hashedPassword = await bcrypt.hash(req.body.password, salt);
             generateUniqueId(connection).then((id2) => {
                 connection.query('INSERT INTO users (id, username, email, password) VALUES (?,?,?,?)', [id2, req.body.username, req.body.email, hashedPassword], async (error, results, fields) => {
-                    res.status(201).send('User Created');
+                    res.status(200).send('User Created');
                     console.log('User created.', hashedPassword)
                 });
             })
@@ -313,12 +314,12 @@ app.post('/login', checkIpMiddleware, async (req, res) => {
               return res.status(500).send(e.message);
           }
       if (results.length === 0) {
-          return res.status(400).send('user not found');
+          return res.status(202).send('user not found (202)');
       }
       const validPass = await bcrypt.compare(req.body.password, results[0].password);
       if (!validPass) {
           console.log("Invalid password detected!")
-          return res.status(400).send('Invalid Password');
+          return res.status(201).send('Invalid Password (201)');
       }
       const token = jwt.sign({ id: results[0].id }, 'secretkey');
       const email = req.body.email;
