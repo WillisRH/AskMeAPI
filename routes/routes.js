@@ -28,6 +28,7 @@ const { specialUserListControl } = require("../controllers/specialUserList");
 const {
     removeSpecialUserControl,
 } = require("../controllers/removeSpecialUser");
+const { sendUserDataControl } = require("../controllers/sendUserData");
 
 const routes = express.Router();
 
@@ -98,6 +99,8 @@ routes.post("/specialuserlist", checkIpMiddleware, specialUserListControl);
 
 // remove special user
 routes.post("/removespecialuser", checkIpMiddleware, removeSpecialUserControl);
+
+routes.post("/senduserdata", checkIpMiddleware, sendUserDataControl);
 
 // status post
 routes.post("/status", checkIpMiddleware, (req, res) => {
