@@ -18,10 +18,11 @@ exports.sendUserDataControl = (req, res) => {
                 }
 
                 if (results.length === 0) {
-                    return res.status(202).send("user not found (202)");
+                    return res
+                        .status(202)
+                        .json({ err: "user not found (202)" });
                 }
 
-                const token = jwt.sign({ id: idparam }, "secretkey");
                 const email = results[0].email;
                 const username = results[0].username;
                 const id = idparam;

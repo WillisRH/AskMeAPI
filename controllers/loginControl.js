@@ -24,12 +24,19 @@ exports.loginControl = async (req, res) => {
                     console.log("Invalid password detected!");
                     return res.status(202).send("Invalid Password");
                 }
-                const token = jwt.sign({ id: results[0].id }, "secretkey");
-                const email = req.body.email;
                 const username = results[0].username;
                 const id = results[0].id;
+                const email = results[0].email;
+                const token = jwt.sign(
+                    {
+                        id: id,
+                        username: username,
+                        email: email,
+                    },
+                    "secretkey"
+                );
                 console.log(id);
-                res.status(200).json({ token, email, username, id });
+                res.status(200).json({ token });
                 console.log("Loggin attempt success!");
                 console.log("The Token is: " + token);
             }

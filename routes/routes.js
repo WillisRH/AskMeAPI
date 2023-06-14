@@ -100,7 +100,7 @@ routes.post("/specialuserlist", checkIpMiddleware, specialUserListControl);
 // remove special user
 routes.post("/removespecialuser", checkIpMiddleware, removeSpecialUserControl);
 
-routes.post("/senduserdata", checkIpMiddleware, sendUserDataControl);
+routes.post("/senduserdata/:id", checkIpMiddleware, sendUserDataControl);
 
 // status post
 routes.post("/status", checkIpMiddleware, (req, res) => {
