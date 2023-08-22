@@ -1,52 +1,62 @@
 # **AskMeAPI Documentation**
 
-## /status 
-> Checking the status of the API.
+## POST /register
 
-## /register
-> Making a new user through the database.
+> bodies : username, email, password
+> create new user
 
-## /login
-> Checking and sending the user data, and give an access.
+## POST /login
 
-## /submit
-> Submiting the interaction to user question.
+> bodies : username, password
+> login function
 
-## /getquestiontitle/:id
-> Getting the question title of a user.
+## GET /session/:id
 
-## /questionsprofilelist/:id
-> Getting question list of a user.
+> Get a session data/info
 
-## /submitquestionprofilelist 
-> Making a new question for a user.
+## GET /user-sessions/:creatorid
 
-## /getusernamebyquestionid/:id 
-> Getting a username by a questionid.
+> Get a user created sessions
 
-## /questionslist
-> Getting the user answer list.
+## POST /session
 
-## /questions/:id
-> Getting the user answer by an id.
+> bodies : question, creator (creator's id)
+> Create a new session for a user
 
-## /questions/:id/delete
-> Deleting an answer from an id.
+## DELETE /session/:id
 
-## /session/:id/delete
-> Deleting a question from an id.
+> Delete a session
 
-## /addspecialuser
-> Adding special user.
+## PATCH /new-answer
 
-## /specialuserlist
-> Getting list of special user.
+> bodies : sessionid, answer
+> Insert a new answer that submitted for a session
 
-## /removespecialuser
-> Removing special user by an id.
+## PATCH /delete-answer
 
-## /emergencyoff
-> Shutdown the server immediately.
+> bodies : sessionid, answerid
+> Delete an answer from a session
 
+## GET /user/:id
 
-### Gw juga pusing bikin repo nya, kalo salah yaaa, mohon maklumi.
+> Get the user's data
+
+## DELETE /user/:id
+
+> Delete the user's account from db
+
+## PATCH /add-specialuser
+
+> bodies : id (user's id)
+> Add a user as a special user
+
+## GET /specialusers
+
+> Get a list of special users
+
+## PATCH /remove-specialuser
+
+> bodies : id (user's id)
+> Remove a user from special user list
+
+### Gw juga pusing bikin repo nya, kalo salah yaaa, mohon maklumi
