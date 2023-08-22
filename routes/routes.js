@@ -14,6 +14,7 @@ const {
   getSpecialUsers,
   removeSpecialUser,
 } = require("../controllers/specialuser");
+const { getUserData, deleteUser } = require("../controllers/user");
 const routes = express.Router();
 
 // Auth routes
@@ -23,10 +24,14 @@ routes.post("/login", loginControl);
 // Session routes
 routes.get("/session/:id", getSession);
 routes.get("/user-sessions/:creatorid", getUserSession);
-routes.post("/session", createSession);
+routes.post("/session", createSession); // body : question, creatorid
 routes.delete("/session/:id", deleteSession);
-routes.patch("/new-answer", newAnswer);
-routes.patch("/delete-answer", deleteAnswer);
+routes.patch("/new-answer", newAnswer); // body : sessionid, answer
+routes.patch("/delete-answer", deleteAnswer); // body : sessionid, answerid
+
+// User routes
+routes.get("/user/:id", getUserData);
+routes.delete("/user/:id", deleteUser);
 
 // Special User routes
 routes.patch("/add-specialuser", addSpecialUser);

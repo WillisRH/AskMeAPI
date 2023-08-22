@@ -111,9 +111,8 @@ exports.newAnswer = async (req, res) => {
   }
 
   const findAnswerId = await session.findOne({
-    answers: {
-      id: id,
-    },
+    id: sessionid,
+    "answers.id": id,
   });
 
   while (findAnswerId) {
@@ -146,8 +145,9 @@ exports.deleteAnswer = async (req, res) => {
     return res.status(202).json({ err: "Session with that id not found" });
   }
 
-  const findAnswer = findSession.answers.find((answer) => {
-    answer.id = answerid;
+  const findAnswer = await session.findOne({
+    id: sessionid,
+    "answers.id": answerid,
   });
 
   if (!findAnswer) {
