@@ -2,12 +2,12 @@
 
 ## POST /register
 
-> bodies : username, email, password
+> bodies : username, email, password,
 > create new user
 
 ## POST /login
 
-> bodies : username, password
+> bodies : username, password,
 > login function
 
 ## GET /session/:id
@@ -20,7 +20,7 @@
 
 ## POST /session
 
-> bodies : question, creator (creator's id)
+> bodies : question, creator (creator's id),
 > Create a new session for a user
 
 ## DELETE /session/:id
@@ -29,12 +29,12 @@
 
 ## PATCH /new-answer
 
-> bodies : sessionid, answer
+> bodies : sessionid, answer,
 > Insert a new answer that submitted for a session
 
 ## PATCH /delete-answer
 
-> bodies : sessionid, answerid
+> bodies : sessionid, answerid,
 > Delete an answer from a session
 
 ## GET /user/:id
@@ -47,7 +47,7 @@
 
 ## PATCH /add-specialuser
 
-> bodies : id (user's id)
+> bodies : id (user's id),
 > Add a user as a special user
 
 ## GET /specialusers
@@ -56,7 +56,7 @@
 
 ## PATCH /remove-specialuser
 
-> bodies : id (user's id)
+> bodies : id (user's id),
 > Remove a user from special user list
 
 ### Gw juga pusing bikin repo nya, kalo salah yaaa, mohon maklumi
