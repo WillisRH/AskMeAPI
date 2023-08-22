@@ -1,3 +1,4 @@
+const { compareSync } = require("bcrypt");
 const { user } = require("../utils/database");
 const jwt = require("jsonwebtoken");
 
@@ -5,7 +6,7 @@ exports.loginControl = async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    return res.status(203).json({ err: "Incomplete credentials" });
+    return res.status(201).json({ err: "Incomplete credentials" });
   }
 
   const findUser = await user.findOne({
@@ -13,7 +14,13 @@ exports.loginControl = async (req, res) => {
   });
 
   if (!findUser) {
-    return res.status(201).json({ err: "Username doesn't exists" });
+    return res.status(202).json({ err: "Username doesn't exists" });
+  }
+
+  const checkPass = compareSync(password, findUser.password);
+
+  if (!checkPass) {
+    return res.status(203).json({ err: "Incorrect password!" });
   }
 
   const id = findUser.id;

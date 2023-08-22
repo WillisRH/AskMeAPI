@@ -58,5 +58,17 @@ exports.registerControl = async (req, res) => {
     password: hashPass,
     createdAt: fullDate,
   });
-  return res.status(200).json({ err: "Successfully Registered New Account!" });
+
+  const token = jwt.sign(
+    {
+      id,
+      username,
+      email,
+    },
+    process.env.SECRET_TOKEN_KEY
+  );
+
+  return res
+    .status(200)
+    .json({ err: "Successfully Registered New Account!", token });
 };
