@@ -57,6 +57,7 @@ exports.registerControl = async (req, res) => {
     username: username,
     email: email,
     password: hashPass,
+    special: false,
     createdAt: fullDate,
   });
 
