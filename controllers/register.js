@@ -1,6 +1,7 @@
 const { hashSync, genSaltSync } = require("bcrypt");
 const { user } = require("../utils/database");
 const { generateUniqueId } = require("../utils/uniqueIdGen");
+const jwt = require("jsonwebtoken");
 
 exports.registerControl = async (req, res) => {
   const { username, email, password } = req.body;
